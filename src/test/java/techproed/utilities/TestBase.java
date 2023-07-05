@@ -3,21 +3,24 @@ package techproed.utilities;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestBase {
-
+public abstract class TestBase {
     /*
-    TestBase class'ından obje oluşturmanın önüne geçmek için bu class'ı abstract yapabiliriz.
+        TestBase class'ından obje oluşturmanın önüne geçmek için bu class'ı abstract yapabiliriz.
     TestBase testBase = new TestBase(); yani bu şekilde obje oluşturmanın önüne geçmiş oluruz.
-    Bu class'a extends yaptığımız test class'larından ulaşabiliriz.
+    Bu class'a extends yaptığımız test class'larından ulaşabiliriz
      */
     protected WebDriver driver;
     @Before
@@ -30,12 +33,10 @@ public class TestBase {
 
     @After
     public void tearDown() throws Exception {
-
-        driver.quit();
+        //driver.quit();
     }
 
-
-    //HARD WAIT(Bekleme Methodu)
+    //HARD WAIT (Bekleme Methodu)
     public void bekle(int saniye){
         try {
             Thread.sleep(saniye*1000);
@@ -43,20 +44,51 @@ public class TestBase {
             throw new RuntimeException(e);
         }
     }
+
+    //Selenium Wait/Explicit Wait
+    //visibilityOf(element) methodu
+    public void visibleWait(WebElement element,int saniye){
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(saniye));
+        wait.until(ExpectedConditions.visibilityOf(element));
+    }
+
+    //visibilityOfElementLocated(locator) methodu
+    public void visibleWait(By locator, int saniye){
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(saniye));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    //AlertWait methodu
+    public void alertWait(int saniye){
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(saniye));
+        wait.until(ExpectedConditions.alertIsPresent());
+    }
+
+    //FluentWait visible Methodu
+    public void visibleFluentWait(WebElement element,int saniye,int milisaniye){
+        new FluentWait<>(driver).withTimeout(Duration.ofSeconds(saniye)).
+                pollingEvery(Duration.ofMillis(milisaniye)).
+                until(ExpectedConditions.visibilityOf(element));
+    }
+
+
+
+
     //AcceptAlert
-    public  void acceptAlert(){
+    public void acceptAlert(){
         driver.switchTo().alert().accept();
     }
+
     //DismissAlert
-    public  void dismissAlert(){
+    public void dismissAlert(){
         driver.switchTo().alert().dismiss();
     }
     //getTextAlert
-    public boolean getTextAlert(){
-        driver.switchTo().alert().getText();
-        return false;
+    public String getTextAlert(){
+        return driver.switchTo().alert().getText();
     }
-    //SendKeysAlert
+
+    //sendKeysAlert
     public void sendKeysAlert(String text){
         driver.switchTo().alert().sendKeys(text);
     }
@@ -79,16 +111,15 @@ public class TestBase {
         select.selectByValue(value);
     }
 
-    //SwitchTo Window
+    //SwitchTo Window-1
     public void switchToWindow(int index){
         List<String> pencereler = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(pencereler.get(index));
     }
-
-    //SwitchTo Window 2
-    public void switchTowindow2(int index){
-        List<String> pencereler = new ArrayList<>(driver.getWindowHandles());
+    //SwitchTo Window-2
+    public void switchToWindow2(int index){
         driver.switchTo().window(driver.getWindowHandles().toArray()[index].toString());
     }
+
 
 }

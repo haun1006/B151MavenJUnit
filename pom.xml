@@ -39,13 +39,21 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-
-
-
-
+        <dependency>
+            <groupId>faker</groupId>
+            <artifactId>faker</artifactId>
+            <version>0.3.2</version>
+        </dependency>
 
 
     </dependencies>
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>Clojars</name>
+            <url>https://repo.clojars.org/</url>
+        </repository>
+    </repositories>
 
 
 </project>
